@@ -1,10 +1,65 @@
-function StupidConsole(id) {
-    this.id = id;
+function CommandRegistry() {
+    this.commands = [];
 }
 
+CommandRegistry.prototype.register = function (name, callbackFn) {
+    this.commands[name] = callbackFn;
+};
+
+CommandRegistry.prototype.deregister = function (name) {
+    this.commands[name] = undefined;
+};
+
+CommandRegistry.prototype.trigger = function (args) {
+
+    if (Object.prototype.toString.call(args) === '[object Array]') {
+
+        //first element is name
+        var name = args[0];
+
+        //remove name (first element) from args
+        args.splice(0, 1);
+    }
+
+    //otherwise args is only name
+    else {
+        name = args;
+        args = [];
+    }
+
+    if (this.commands[name] !== undefined) {
+        this.commands[name](args);
+        return true;
+    }
+    return false;
+};
+
+function StupidConsole(id) {
+    this.id = id;
+    this.defaultText = "";
+    this.errorCallback = undefined;
+    this.commandRegistry = new CommandRegistry();
+}
+
+StupidConsole.prototype.init = function () {
+    this.registerKeyEvents();
+    this.addNewLine();
+};
+
+StupidConsole.prototype.setDefaultText = function (text) {
+    this.defaultText = (text === undefined ? "" : text);
+};
+
+StupidConsole.prototype.appendCurrentLine = function (text) {
+    text = (text === undefined ? this.defaultText : text);
+    $(".console-edit-left").append(text);
+};
+
 StupidConsole.prototype.addNewLine = function (text) {
-    text = text === undefined ? "" : text;
+    text = (text === undefined ? this.defaultText : text);
     $(".console-content").append('<div class="console-line"><span>' + text + "</span></div>");
+
+    this.setLastLineActive();
 };
 
 StupidConsole.prototype.moveCursorRight = function () {
@@ -63,23 +118,18 @@ StupidConsole.prototype.parseInput = function () {
     return text.split(" ");
 };
 
-StupidConsole.prototype.parseArgs = function () {
-    var text = $(".console-edit-left").text() + $(".console-edit-right").text();
-    var args = text.split(" ");
-    return args;
-}
+StupidConsole.prototype.register = function (name, callbackFn) {
+    this.commandRegistry.register(name, callbackFn);
+};
 
-StupidConsole.prototype.processCommands = function () {
-    var args = this.parseArgs();
+StupidConsole.prototype.deregister = function (name) {
+    this.commandRegistry.deregister(name);
+};
 
-    switch (args[0]) {
-        case "help":
-            this.addNewLine("Hier wird dir nicht geholfen.");
-            this.setLastLineActive();
-            break;
-        default:
-            this.addNewLine("Unbekannter Befehl.");
-            this.setLastLineActive();
+StupidConsole.prototype.trigger = function (name) {
+    if (!this.commandRegistry.trigger(name)) {
+        if (this.errorCallback)
+            this.errorCallback();
     }
 };
 
@@ -91,9 +141,8 @@ StupidConsole.prototype.registerKeyEvents = function () {
 
             //enter
             case 13:
-                self.processCommands();
-                self.addNewLine("phis@about: $ ");
-                self.setLastLineActive();
+                self.trigger(self.parseInput());
+                self.addNewLine();
                 break;
             default:
                 var char = String.fromCharCode(e.which);
@@ -124,11 +173,23 @@ StupidConsole.prototype.registerKeyEvents = function () {
 };
 
 $(document).ready(function () {
-
-    var sc = new StupidConsole("dummy");
-    sc.registerKeyEvents();
-    sc.addNewLine("phis@about: $ ");
-    sc.setLastLineActive();
+    var sc = new StupidConsole("#test");
+    sc.setDefaultText("foo@bar: $ ");
+    sc.init();
+    sc.register("help", function () {
+        console.log("fdsfds");
+        sc.addNewLine("Hier wird dir nicht geholfen.");
+    });
+    sc.register("yolo", function () {
+        sc.addNewLine("You only live once!");
+    });
+    sc.register("args", function (args) {
+        sc.addNewLine("Übergebene Argumente: ");
+        console.log(args);
+        for (var i = 0; i < args.length; i++) {
+            sc.appendCurrentLine((i + 1) + ". " + args[i] + " ");
+        }
+    })
 });
 
 

@@ -1,10 +1,10 @@
 * {
-  font-family: monospace;
+  font-family: 'Source Code Pro', monospace;
   box-sizing: border-box;
 }
 
 .console {
-  width: 400px;
+  width: 600px;
   box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
 }
 
@@ -21,7 +21,7 @@
   background-color: black;
   border: 3px solid gray;
   border-top: 0;
-  min-height: 250px;
+  min-height: 300px;
   color: white;
   word-wrap: break-word;
   border-radius: 1px;
