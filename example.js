@@ -20,10 +20,6 @@ $(document).ready(function () {
         }
     }, "Hilft dir!");
 
-    sc.register("yolo", function () {
-        sc.addNewLine("You only live once!");
-    });
-
     sc.register("args", function (args) {
         sc.addNewLine("Übergebene Argumente: ");
         console.log(args);
