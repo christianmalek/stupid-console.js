@@ -225,8 +225,7 @@ StupidConsole.prototype.deregister = function (name) {
 
 StupidConsole.prototype.trigger = function (name) {
     if (!this.commandRegistry.trigger(name)) {
-        if (this.errorCallback)
-            this.errorCallback();
+        this.commandRegistry.trigger("error");
     }
 };
 

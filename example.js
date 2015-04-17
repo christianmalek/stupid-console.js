@@ -4,7 +4,7 @@ $(document).ready(function () {
     var sc = new StupidConsole("#test");
     sc.setDefaultText("foo@bar: $ ");
     sc.setErrorCallback(function (args) {
-        sc.addNewLine()
+        sc.addNewLine("Ungültiger Befehl");
     });
     sc.init();
 
