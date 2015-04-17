@@ -4,8 +4,11 @@ function CommandRegistry() {
     this.commands = [];
 }
 
-CommandRegistry.prototype.register = function (name, callbackFn) {
-    this.commands[name] = callbackFn;
+CommandRegistry.prototype.register = function (name, callbackFn, description) {
+    this.commands[name] = {
+        description: description === undefined ? "" : description,
+        callbackFn: callbackFn
+    };
 };
 
 CommandRegistry.prototype.deregister = function (name) {
@@ -30,7 +33,7 @@ CommandRegistry.prototype.trigger = function (args) {
     }
 
     if (this.commands[name] !== undefined) {
-        this.commands[name](args);
+        this.commands[name].callbackFn(args);
         return true;
     }
     return false;
@@ -51,8 +54,6 @@ History.prototype.navigateUp = function () {
         this.offset--;
     }
 
-    console.log(history, this.offset);
-
     if (history && history.length > 0) {
         return (history[history.length - this.offset - 1]);
     }
@@ -69,8 +70,6 @@ History.prototype.navigateDown = function () {
     else if (this.offset + 1 < history.length) {
         this.offset++;
     }
-
-    console.log(history, this.offset);
 
     if (history && history.length > 0) {
         return (history[history.length - this.offset - 1]);
@@ -98,13 +97,13 @@ History.prototype.get = function () {
 function StupidConsole(id) {
     this.id = id;
     this.defaultText = "";
-    this.errorCallback = undefined;
     this.history = new History();
+    this.saveToHistory = true;
     this.commandRegistry = new CommandRegistry();
+    this.registerKeyEvents();
 }
 
 StupidConsole.prototype.init = function () {
-    this.registerKeyEvents();
     this.addNewLine();
 };
 
@@ -112,13 +111,18 @@ StupidConsole.prototype.setDefaultText = function (text) {
     this.defaultText = (text === undefined ? "" : text);
 };
 
+StupidConsole.prototype.setErrorCallback = function (callbackFn) {
+    this.commandRegistry.register("error", callbackFn);
+};
+
 StupidConsole.prototype.appendCurrentLine = function (text) {
     text = (text === undefined ? this.defaultText : text);
     $(".console-edit-left").append(text);
 };
 
-StupidConsole.prototype.addNewLine = function (text) {
+StupidConsole.prototype.addNewLine = function (text, saveToHistory) {
     this.offset = undefined;
+    saveToHistory = !!saveToHistory;
     text = (text === undefined ? this.defaultText : text);
     $(".console-content").append('<div class="console-line"><span>' + text + "</span></div>");
 
@@ -161,8 +165,6 @@ StupidConsole.prototype.moveCursorLeft = function () {
 StupidConsole.prototype.navigateHistoryUp = function () {
     var text = this.history.navigateUp();
 
-    console.log(history, this.offset);
-
     if (text !== false) {
         this.clearLine();
         this.appendCurrentLine(text);
@@ -171,8 +173,6 @@ StupidConsole.prototype.navigateHistoryUp = function () {
 
 StupidConsole.prototype.navigateHistoryDown = function () {
     var text = this.history.navigateDown();
-
-    console.log(history, this.offset);
 
     if (text !== false) {
         this.clearLine();
@@ -210,12 +210,13 @@ StupidConsole.prototype.removeOneCharFromActiveLine = function () {
 //TODO improve parsing
 StupidConsole.prototype.parseInput = function () {
     var text = $(".console-edit-left").text() + $(".console-edit-right").text();
-    this.history.add(text);
+    if (this.saveToHistory)
+        this.history.add(text);
     return text.split(" ");
 };
 
-StupidConsole.prototype.register = function (name, callbackFn) {
-    this.commandRegistry.register(name, callbackFn);
+StupidConsole.prototype.register = function (name, callbackFn, description) {
+    this.commandRegistry.register(name, callbackFn, description);
 };
 
 StupidConsole.prototype.deregister = function (name) {
@@ -273,5 +274,9 @@ StupidConsole.prototype.registerKeyEvents = function () {
                 self.navigateHistoryUp();
                 break;
         }
+    });
+
+    $(".console").click(function () {
+        $(".console").addClass("active");
     });
 };
