@@ -1,0 +1,65 @@
+* {
+  font-family: monospace;
+  box-sizing: border-box;
+}
+
+.console {
+  background-color: black;
+  border: 3px solid gray;
+  color: white;
+  width: 280px;
+  min-height: 150px;
+  word-wrap: break-word;
+  border-radius: 1px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, .3);
+}
+
+.console-header {
+  background-color: gray;
+  text-align: center;
+  border-bottom: 3px solid gray;
+  font-weight: bold;
+
+  .active {
+    background: blue;
+  }
+}
+
+.cl {
+  padding-left: .2em;
+  padding-right: .2em;
+  width: 100%;
+}
+
+.ct {
+  width: 100%;
+}
+
+.ca {
+}
+
+.ce-left {
+}
+
+.ce-right {
+}
+
+.cursor {
+  border-bottom: 1px solid white;
+}
+
+.cursor {
+  -webkit-animation: 2.5s blink step-end infinite;
+}
+
+@-webkit-keyframes blink {
+  from, to {
+    color: transparent;
+    border-color: transparent;
+  }
+  50% {
+    color: white;
+    border-color: white;
+  }
+
+}
