@@ -38,46 +38,49 @@ $(document).ready(function () {
                 break;
         }
     });
+
+    $(".console").click(function () {
+        $(".console").addClass("active");
+    });
 });
 
 function moveCursorRight() {
-    var right = $(".ce-right").text();
+    var ceRight = $(".console-edit-right");
+    var right = ceRight.text();
 
     //if there's nothing to move, stahp it!
     if (right.length === 0)
         return;
 
-    $(".ce-left").append(right[0]);
-    $(".ce-right").text(right.substring(1, right.length));
+    $(".console-edit-left").append(right[0]);
+    ceRight.text(right.substring(1, right.length));
 }
 
 function moveCursorLeft() {
-    var left = $(".ce-left").text();
+    var ceLeft = $(".console-edit-left");
+    var left = ceLeft.text();
 
     //if there's nothing to move, stahp it!
     if (left.length === 0)
         return;
 
-    $(".ce-right").prepend(left[left.length - 1]);
-    $(".ce-left").text(left.substring(0, left.length - 1));
-
-
+    $(".console-edit-right").prepend(left[left.length - 1]);
+    ceLeft.text(left.substring(0, left.length - 1));
 }
 
 function setLastLineActive() {
     $(".cursor").remove();
-    $(".ca").removeClass("ca");
-    $(".ce-left").removeClass("ce-left");
-    $(".ce-right").removeClass("ce-right");
-    var last = $(".cl").last().addClass("ca");
-    last.append('<span class="ce-left"></span>');
-    last.append(getCursorSpan("&nbsp;"));
-    last.append('<span class="ce-right"></span>');
+    $(".console-active").removeClass("console-active");
+    $(".console-edit-left").removeClass("console-edit-left");
+    $(".console-edit-right").removeClass("console-edit-right");
+    var last = $(".console-line").last().addClass("console-active");
+    last.append('<span class="console-edit-left"></span>');
+    last.append(getCursorSpan("|"));
+    last.append('<span class="console-edit-right"></span>');
 }
 
 function writeToActiveLine(text) {
-    $(".ce-left").append(text);
-    cursorPos++;
+    $(".console-edit-left").append(text);
 }
 
 function getCursorSpan(text) {
@@ -86,25 +89,24 @@ function getCursorSpan(text) {
 }
 
 function removeOneCharFromActiveLine() {
-    var text = $(".ce-left").text();
+    var ceLeft = $(".console-edit-left");
+    var text = ceLeft.text();
     text = text.length > 0 ? text.substr(0, text.length - 1) : text;
-    $(".ce-left").text(text);
+    ceLeft.text(text);
 }
 
 function addNewLine(text) {
-    cursorPos = 0;
     text = text === undefined ? "" : text;
-    $(".console").append('<div class="cl">' +
-    '<span class="ct">' +
+    $(".console-content").append('<div class="console-line">' +
+    '<span>' +
     text +
     "</span>" +
     "</div>");
 }
 
 function parseArgs() {
-    var text = $(".ce-left").text() + $(".ce-right").text();
-    var args = text.split(" ");
-    return args;
+    var text = $(".console-edit-left").text() + $(".console-edit-right").text();
+    return text.split(" ");
 }
 
 function processCommands() {

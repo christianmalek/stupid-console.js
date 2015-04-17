@@ -3,63 +3,70 @@
   box-sizing: border-box;
 }
 
+@mixin vendor-prefix($name, $argument) {
+  -webkit-#{$name}: #{$argument};
+  -ms-#{$name}: #{$argument};
+  -moz-#{$name}: #{$argument};
+  -o-#{$name}: #{$argument};
+  #{$name}: #{$argument};
+}
+
 .console {
+  width: 400px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, .3);
+}
+
+.active .console-content {
+  border-color: royalblue;
+}
+
+.active .console-header {
+  background-color: royalblue;
+  color: white;
+}
+
+.console-content {
   background-color: black;
   border: 3px solid gray;
+  border-top: 0;
+  min-height: 250px;
   color: white;
-  width: 280px;
-  min-height: 150px;
   word-wrap: break-word;
   border-radius: 1px;
-  box-shadow: 0 2px 7px rgba(0, 0, 0, .3);
 }
 
 .console-header {
   background-color: gray;
   text-align: center;
-  border-bottom: 3px solid gray;
+  padding: .2em;
   font-weight: bold;
-
-  .active {
-    background: blue;
-  }
 }
 
-.cl {
+.console-line {
   padding-left: .2em;
   padding-right: .2em;
   width: 100%;
 }
 
-.ct {
-  width: 100%;
+.console-active {
 }
 
-.ca {
+.console-edit-left {
 }
 
-.ce-left {
-}
-
-.ce-right {
+.console-edit-right {
 }
 
 .cursor {
-  border-bottom: 1px solid white;
-}
-
-.cursor {
-  -webkit-animation: 2.5s blink step-end infinite;
+  @include vendor-prefix(animation, 2.5s blink step-end infinite)
 }
 
 @-webkit-keyframes blink {
   from, to {
     color: transparent;
-    border-color: transparent;
   }
   50% {
     color: white;
-    border-color: white;
   }
 
 }
