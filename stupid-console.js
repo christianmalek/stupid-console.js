@@ -1,3 +1,5 @@
+'use strict';
+
 function CommandRegistry() {
     this.commands = [];
 }
@@ -34,10 +36,70 @@ CommandRegistry.prototype.trigger = function (args) {
     return false;
 };
 
+function History() {
+    this.history = [];
+    this.offset = undefined;
+}
+
+History.prototype.navigateUp = function () {
+    var history = this.history;
+
+    if (this.offset === undefined) {
+        this.offset = 0;
+    }
+    else if (this.offset > 0) {
+        this.offset--;
+    }
+
+    console.log(history, this.offset);
+
+    if (history && history.length > 0) {
+        return (history[history.length - this.offset - 1]);
+    }
+    else
+        return false;
+};
+
+History.prototype.navigateDown = function () {
+    var history = this.history;
+
+    if (this.offset === undefined) {
+        this.offset = 0;
+    }
+    else if (this.offset + 1 < history.length) {
+        this.offset++;
+    }
+
+    console.log(history, this.offset);
+
+    if (history && history.length > 0) {
+        return (history[history.length - this.offset - 1]);
+    }
+    else
+        return false;
+};
+
+History.prototype.clear = function () {
+    this.history = [];
+    this.offset = undefined;
+};
+
+History.prototype.add = function (obj) {
+    this.history.push(obj);
+    this.offset = undefined;
+};
+
+History.prototype.get = function () {
+    if (this.offset === undefined || this.history === undefined)
+        return false;
+    return this.history[this.offset];
+};
+
 function StupidConsole(id) {
     this.id = id;
     this.defaultText = "";
     this.errorCallback = undefined;
+    this.history = new History();
     this.commandRegistry = new CommandRegistry();
 }
 
@@ -56,10 +118,20 @@ StupidConsole.prototype.appendCurrentLine = function (text) {
 };
 
 StupidConsole.prototype.addNewLine = function (text) {
+    this.offset = undefined;
     text = (text === undefined ? this.defaultText : text);
     $(".console-content").append('<div class="console-line"><span>' + text + "</span></div>");
 
     this.setLastLineActive();
+};
+
+StupidConsole.prototype.clear = function () {
+    $(".console-content").empty();
+};
+
+StupidConsole.prototype.clearLine = function () {
+    $(".console-edit-left").text("");
+    $(".console-edit-right").text("");
 };
 
 StupidConsole.prototype.moveCursorRight = function () {
@@ -84,6 +156,28 @@ StupidConsole.prototype.moveCursorLeft = function () {
 
     $(".console-edit-right").prepend(left[left.length - 1]);
     ceLeft.text(left.substring(0, left.length - 1));
+};
+
+StupidConsole.prototype.navigateHistoryUp = function () {
+    var text = this.history.navigateUp();
+
+    console.log(history, this.offset);
+
+    if (text !== false) {
+        this.clearLine();
+        this.appendCurrentLine(text);
+    }
+};
+
+StupidConsole.prototype.navigateHistoryDown = function () {
+    var text = this.history.navigateDown();
+
+    console.log(history, this.offset);
+
+    if (text !== false) {
+        this.clearLine();
+        this.appendCurrentLine(text);
+    }
 };
 
 StupidConsole.prototype.setLastLineActive = function () {
@@ -113,8 +207,10 @@ StupidConsole.prototype.removeOneCharFromActiveLine = function () {
     ceLeft.text(text);
 };
 
+//TODO improve parsing
 StupidConsole.prototype.parseInput = function () {
     var text = $(".console-edit-left").text() + $(".console-edit-right").text();
+    this.history.add(text);
     return text.split(" ");
 };
 
@@ -164,41 +260,18 @@ StupidConsole.prototype.registerKeyEvents = function () {
                 self.moveCursorLeft();
                 break;
 
+            case 38:
+                self.navigateHistoryDown();
+                break;
+
             //right
             case 39:
                 self.moveCursorRight();
                 break;
+
+            case 40:
+                self.navigateHistoryUp();
+                break;
         }
     });
 };
-
-$(document).ready(function () {
-    var sc = new StupidConsole("#test");
-    sc.setDefaultText("foo@bar: $ ");
-    sc.init();
-    sc.register("help", function () {
-        console.log("fdsfds");
-        sc.addNewLine("Hier wird dir nicht geholfen.");
-    });
-    sc.register("yolo", function () {
-        sc.addNewLine("You only live once!");
-    });
-    sc.register("args", function (args) {
-        sc.addNewLine("Übergebene Argumente: ");
-        console.log(args);
-        for (var i = 0; i < args.length; i++) {
-            sc.appendCurrentLine((i + 1) + ". " + args[i] + " ");
-        }
-    })
-});
-
-
-
-
-
-
-
-
-
-
-
