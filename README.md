@@ -1,7 +1,7 @@
 # stupid-console.js
 A very simplistic console-like component for websites e.g. to create creative about-pages.
 
-#### CAUTION: At the moment it's only possible to use console at the same time!
+#### CAUTION: At the moment it's only possible to use one console at the same time!
 
 
 Example code:
@@ -10,13 +10,22 @@ Example code:
 $(document).ready(function () {
     'use strict';
 
+    //pass unique selector (not used yet)
     var sc = new StupidConsole("#test");
+    
+    //set default line beginning text
     sc.setDefaultText("foo@bar: $ ");
+    
+    //called function when no matching command got found
     sc.setErrorCallback(function (args) {
-        sc.addNewLine("Ungültiger Befehl");
+        sc.addNewLine("invalid command!");
     });
+    
+    //registers click and key handlers, mandatory to use stupid-console.js!
     sc.init();
 
+    //the register function registers functions.
+    //the parameters are NAME, CALLBACK FN, DESCRIPTION
     sc.register("help", function () {
         var commands = sc.commandRegistry.commands;
 
