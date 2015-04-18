@@ -98,6 +98,8 @@ var StupidConsole = (function () {
     };
 
     function StupidConsole(id) {
+        if (!id)
+            throw "ID value \"" + id + "\" is invalid or undefined.";
         this.id = id;
         this.headerText = "stupid-console.js";
         this.defaultText = "";
@@ -108,6 +110,8 @@ var StupidConsole = (function () {
         this.scrolledDown = false;
         this.catchGlobalKeyEvents = true;
         this.hasFocus = false;
+
+        this.blur();
     }
 
     StupidConsole.prototype.init = function () {
@@ -117,7 +121,7 @@ var StupidConsole = (function () {
 
     StupidConsole.prototype.setHeaderText = function (text) {
         this.headerText = (text === undefined ? "" : text);
-        $(".console-header").text(this.headerText);
+        $(this.id + " .console-header").text(this.headerText);
     };
 
     StupidConsole.prototype.createConsole = function () {
@@ -125,6 +129,13 @@ var StupidConsole = (function () {
         console.addClass("console");
         console.append('<div class="console-header">' +
             this.headerText + '</div><div class="console-content"></div>');
+    };
+
+    //TODO doesn't work
+    StupidConsole.prototype.blur = function () {
+        $(this.id).blur(function () {
+            console.log("blur");
+        })
     };
 
     StupidConsole.prototype.setDefaultText = function (text) {
@@ -137,14 +148,14 @@ var StupidConsole = (function () {
 
     StupidConsole.prototype.appendCurrentLine = function (text) {
         text = (text === undefined ? this.defaultText : text);
-        $(".console-edit-left").append(text);
+        $(this.id + " .console-edit-left").append(text);
     };
 
     StupidConsole.prototype.addNewLine = function (text, saveToHistory) {
         this.offset = undefined;
         saveToHistory = !!saveToHistory;
         text = (text === undefined ? this.defaultText : text);
-        $(".console-content").append('<div class="console-line"><span>' + text + "</span></div>");
+        $(this.id + " .console-content").append('<div class="console-line"><span>' + text + "</span></div>");
         this.scrolledDown = false;
 
         this.scrollToLastLine();
@@ -152,40 +163,40 @@ var StupidConsole = (function () {
     };
 
     StupidConsole.prototype.scrollToLastLine = function () {
-        $(".console-content").scrollTop(1E10);
+        $(this.id + " .console-content").scrollTop(1E10);
         this.scrolledDown = true;
     };
 
     StupidConsole.prototype.clear = function () {
-        $(".console-content").empty();
+        $(this.id + " .console-content").empty();
     };
 
     StupidConsole.prototype.clearLine = function () {
-        $(".console-edit-left").text("");
-        $(".console-edit-right").text("");
+        $(this.id + " .console-edit-left").text("");
+        $(this.id + " .console-edit-right").text("");
     };
 
     StupidConsole.prototype.moveCursorRight = function () {
-        var ceRight = $(".console-edit-right");
+        var ceRight = $(this.id + " .console-edit-right");
         var right = ceRight.text();
 
         //if there's nothing to move, stahp it!
         if (right.length === 0)
             return;
 
-        $(".console-edit-left").append(right[0]);
+        $(this.id + " .console-edit-left").append(right[0]);
         ceRight.text(right.substring(1, right.length));
     };
 
     StupidConsole.prototype.moveCursorLeft = function () {
-        var ceLeft = $(".console-edit-left");
+        var ceLeft = $(this.id + " .console-edit-left");
         var left = ceLeft.text();
 
         //if there's nothing to move, stahp it!
         if (left.length === 0)
             return;
 
-        $(".console-edit-right").prepend(left[left.length - 1]);
+        $(this.id + " .console-edit-right").prepend(left[left.length - 1]);
         ceLeft.text(left.substring(0, left.length - 1));
     };
 
@@ -208,18 +219,18 @@ var StupidConsole = (function () {
     };
 
     StupidConsole.prototype.setLastLineActive = function () {
-        $(".cursor").remove();
-        $(".console-active").removeClass("console-active");
-        $(".console-edit-left").removeClass("console-edit-left");
-        $(".console-edit-right").removeClass("console-edit-right");
-        var last = $(".console-line").last().addClass("console-active");
+        $(this.id + " .cursor").remove();
+        $(this.id + " .console-active").removeClass("console-active");
+        $(this.id + " .console-edit-left").removeClass("console-edit-left");
+        $(this.id + " .console-edit-right").removeClass("console-edit-right");
+        var last = $(this.id + " .console-line").last().addClass("console-active");
         last.append('<span class="console-edit-left"></span>');
         last.append(this.getCursorSpan("|"));
         last.append('<span class="console-edit-right"></span>');
     };
 
     StupidConsole.prototype.writeToActiveLine = function (text) {
-        $(".console-edit-left").append(text);
+        $(this.id + " .console-edit-left").append(text);
     };
 
     StupidConsole.prototype.getCursorSpan = function (text) {
@@ -228,7 +239,7 @@ var StupidConsole = (function () {
     };
 
     StupidConsole.prototype.removeOneCharFromActiveLine = function () {
-        var ceLeft = $(".console-edit-left");
+        var ceLeft = $(this.id + " .console-edit-left");
         var text = ceLeft.text();
         text = text.length > 0 ? text.substr(0, text.length - 1) : text;
         ceLeft.text(text);
@@ -236,10 +247,14 @@ var StupidConsole = (function () {
 
 //TODO improve parsing
     StupidConsole.prototype.parseInput = function () {
-        var text = $(".console-edit-left").text() + $(".console-edit-right").text();
+        var text = this.getInput();
         if (this.saveToHistory)
             this.history.add(text);
         return text.split(" ");
+    };
+
+    StupidConsole.prototype.getInput = function () {
+        return $(this.id + " .console-edit-left").text() + $(this.id + " .console-edit-right").text();
     };
 
     StupidConsole.prototype.register = function (name, callbackFn, description) {
@@ -264,7 +279,9 @@ var StupidConsole = (function () {
 
                 //enter
                 case 13:
-                    self.trigger(self.parseInput());
+                    if (self.getInput() !== "") {
+                        self.trigger(self.parseInput());
+                    }
                     self.addNewLine();
                     break;
                 default:
@@ -311,14 +328,14 @@ var StupidConsole = (function () {
 
     StupidConsole.prototype.registerScrollEvent = function () {
         var self = this;
-        $(".console-content").scroll(function () {
+        $(this.id + " .console-content").scroll(function () {
             self.scrolledDown = false;
         })
     };
 
     StupidConsole.prototype.registerClickEvent = function () {
-        $(".console").click(function () {
-            $(".console").addClass("active");
+        $(this.id + " .console").click(function () {
+            $(this.id + " .console").addClass("active");
         });
     };
 
