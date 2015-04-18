@@ -1,3 +1,5 @@
+![](stupidconsole.png)
+
 # stupid-console.js
 A very simplistic console-like component for websites e.g. to create creative about-pages.
 
