@@ -1,10 +1,20 @@
 var StupidConsole = (function () {
     'use strict';
 
+    /**
+     * @description The CommandRegistry provides methods to register, deregister and trigger commands
+     * @constructor
+     */
     function CommandRegistry() {
         this.commands = [];
     }
 
+    /**
+     * @description registers an command
+     * @param {string} name command name
+     * @param {function} callbackFn the function to be called
+     * @param {string} description optional short description for the command
+     */
     CommandRegistry.prototype.register = function (name, callbackFn, description) {
         this.commands[name] = {
             description: description === undefined ? "" : description,
@@ -12,10 +22,19 @@ var StupidConsole = (function () {
         };
     };
 
+    /**
+     * @description deregisters an command
+     * @param {string} name the name of the command which should be deregistered
+     */
     CommandRegistry.prototype.deregister = function (name) {
         this.commands[name] = undefined;
     };
 
+    /**
+     * @description
+     * @param {string|Array} args if string it's the name of the command which should be triggered; if array, the first index is the command and the rest are passed arguments
+     * @returns {boolean}
+     */
     CommandRegistry.prototype.trigger = function (args) {
 
         if (Object.prototype.toString.call(args) === '[object Array]') {
@@ -40,6 +59,10 @@ var StupidConsole = (function () {
         return false;
     };
 
+    /**
+     * @description The History class provides methods to save and navigate to an history of items
+     * @constructor
+     */
     function History() {
         this.history = [];
         this.offset = undefined;
@@ -141,7 +164,7 @@ var StupidConsole = (function () {
 
     StupidConsole.prototype.addNewLine = function (text, saveToHistory) {
         this.offset = undefined;
-        this.saveToHistory = !!saveToHistory;
+        this.saveToHistory = (saveToHistory === undefined ? true : saveToHistory);
         text = (text === undefined ? this.defaultText : text);
         $(this.id + " .console-content").append('<div class="console-line"><span>' + text + "</span></div>");
 
@@ -322,12 +345,16 @@ var StupidConsole = (function () {
         });
     };
 
+    StupidConsole.prototype.setActive = function () {
+        $(".console.active").removeClass("active");
+        $(this.id + ".console").addClass("active");
+    };
+
     StupidConsole.prototype.registerClickEvent = function () {
         var self = this;
 
         $(self.id).click(function () {
-            $(".console.active").removeClass("active");
-            $(self.id + ".console").addClass("active");
+            self.setActive();
         });
     };
 
