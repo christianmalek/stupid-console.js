@@ -28,7 +28,6 @@
 }
 
 .console-content {
-  pointer-events: none;
   background-color: black;
   border: 3px solid gray;
   border-top: 0;
@@ -39,7 +38,6 @@
 }
 
 .console-header {
-  pointer-events: none;
   background-color: gray;
   text-align: center;
   padding: .2em;
@@ -47,7 +45,6 @@
 }
 
 .console-line {
-  pointer-events: none;
   padding-left: .2em;
   padding-right: .2em;
   width: 100%;
