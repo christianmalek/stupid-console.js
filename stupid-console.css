@@ -4,7 +4,8 @@
 
 .console {
   width: 600px;
-  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3); }
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
+  border-radius: 1px; }
 
 .active .console-content {
   border-color: royalblue; }
@@ -20,8 +21,7 @@
   height: 300px;
   overflow-y: scroll;
   color: white;
-  word-wrap: break-word;
-  border-radius: 1px; }
+  word-wrap: break-word; }
 
 .console-header {
   background-color: gray;

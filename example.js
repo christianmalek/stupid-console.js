@@ -6,6 +6,7 @@ $(document).ready(function () {
     sc.setErrorCallback(function (args) {
         sc.addNewLine("Ungültiger Befehl");
     });
+    sc.setHeaderText("My pretty stupid console");
     sc.init();
 
     sc.register("help", function () {

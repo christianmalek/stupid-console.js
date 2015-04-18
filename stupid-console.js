@@ -99,16 +99,32 @@ var StupidConsole = (function () {
 
     function StupidConsole(id) {
         this.id = id;
+        this.headerText = "stupid-console.js";
         this.defaultText = "";
         this.history = new History();
         this.saveToHistory = true;
         this.commandRegistry = new CommandRegistry();
-        this.registerKeyEvents();
+        this.registerEvents();
         this.scrolledDown = false;
+        this.catchGlobalKeyEvents = true;
+        this.hasFocus = false;
     }
 
     StupidConsole.prototype.init = function () {
+        this.createConsole();
         this.addNewLine();
+    };
+
+    StupidConsole.prototype.setHeaderText = function (text) {
+        this.headerText = (text === undefined ? "" : text);
+        $(".console-header").text(this.headerText);
+    };
+
+    StupidConsole.prototype.createConsole = function () {
+        var console = $(this.id);
+        console.addClass("console");
+        console.append('<div class="console-header">' +
+            this.headerText + '</div><div class="console-content"></div>');
     };
 
     StupidConsole.prototype.setDefaultText = function (text) {
@@ -291,14 +307,25 @@ var StupidConsole = (function () {
             }
             self.scrollToLastLine();
         });
+    };
 
+    StupidConsole.prototype.registerScrollEvent = function () {
+        var self = this;
+        $(".console-content").scroll(function () {
+            self.scrolledDown = false;
+        })
+    };
+
+    StupidConsole.prototype.registerClickEvent = function () {
         $(".console").click(function () {
             $(".console").addClass("active");
         });
+    };
 
-        $(".console-content").scroll(function(){
-            this.scrolledDown = false;
-        })
+    StupidConsole.prototype.registerEvents = function () {
+        this.registerClickEvent();
+        this.registerScrollEvent();
+        this.registerKeyEvents();
     };
 
     return StupidConsole;
