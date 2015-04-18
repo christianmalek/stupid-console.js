@@ -3,8 +3,14 @@
 # stupid-console.js
 A very simplistic console-like component for websites e.g. to create creative about-pages.
 
-#### CAUTION: At the moment it's only possible to use one console at the same time!
+## Features
+- History with *Arrow-Up* and *Arrow-Down*
+- Scrollable
+- Multi Instance Support
+- Left-and-right Cursor Navigation
+- Command register function
 
+If you have any wishes or ideas, let me know!
 
 Example code:
 ```js
@@ -12,7 +18,7 @@ Example code:
 $(document).ready(function () {
     'use strict';
 
-    //pass unique selector (not used yet)
+    //pass unique selector
     var sc = new StupidConsole("#test");
     
     //set default line beginning text
@@ -27,7 +33,7 @@ $(document).ready(function () {
     sc.init();
 
     //the register function registers functions.
-    //the parameters are NAME, CALLBACK FN, DESCRIPTION
+    //the parameters are NAME, CALLBACK FN, (optional) DESCRIPTION
     sc.register("help", function () {
         var commands = sc.commandRegistry.commands;
 
