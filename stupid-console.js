@@ -1,7 +1,6 @@
 var StupidConsole = (function () {
     'use strict';
 
-
     function CommandRegistry() {
         this.commands = [];
     }
@@ -91,7 +90,9 @@ var StupidConsole = (function () {
     };
 
     History.prototype.get = function () {
-        if (this.offset === undefined || this.history === undefined)
+        if (this.offset === undefined ||
+            this.history === undefined ||
+            this.history.length === 0)
             return false;
         return this.history[this.offset];
     };
@@ -103,6 +104,7 @@ var StupidConsole = (function () {
         this.saveToHistory = true;
         this.commandRegistry = new CommandRegistry();
         this.registerKeyEvents();
+        this.scrolledDown = false;
     }
 
     StupidConsole.prototype.init = function () {
@@ -127,8 +129,15 @@ var StupidConsole = (function () {
         saveToHistory = !!saveToHistory;
         text = (text === undefined ? this.defaultText : text);
         $(".console-content").append('<div class="console-line"><span>' + text + "</span></div>");
+        this.scrolledDown = false;
 
+        this.scrollToLastLine();
         this.setLastLineActive();
+    };
+
+    StupidConsole.prototype.scrollToLastLine = function () {
+        $(".console-content").scrollTop(1E10);
+        this.scrolledDown = true;
     };
 
     StupidConsole.prototype.clear = function () {
@@ -245,6 +254,7 @@ var StupidConsole = (function () {
                 default:
                     var char = String.fromCharCode(e.which);
                     self.writeToActiveLine(char);
+                    self.scrollToLastLine();
             }
         });
 
@@ -264,6 +274,7 @@ var StupidConsole = (function () {
 
                 case 38:
                     self.navigateHistoryDown();
+                    e.preventDefault();
                     break;
 
                 //right
@@ -273,13 +284,21 @@ var StupidConsole = (function () {
 
                 case 40:
                     self.navigateHistoryUp();
+                    e.preventDefault();
                     break;
+                default:
+                    return;
             }
+            self.scrollToLastLine();
         });
 
         $(".console").click(function () {
             $(".console").addClass("active");
         });
+
+        $(".console-content").scroll(function(){
+            this.scrolledDown = false;
+        })
     };
 
     return StupidConsole;

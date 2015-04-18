@@ -1,60 +1,50 @@
 * {
   font-family: 'Source Code Pro', monospace;
-  box-sizing: border-box;
-}
+  box-sizing: border-box; }
 
 .console {
   width: 600px;
-  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3);
-}
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3); }
 
 .active .console-content {
-  border-color: royalblue;
-}
+  border-color: royalblue; }
 
 .active .console-header {
   background-color: royalblue;
-  color: white;
-}
+  color: white; }
 
 .console-content {
   background-color: black;
   border: 3px solid gray;
   border-top: 0;
-  min-height: 300px;
+  height: 300px;
+  overflow-y: scroll;
   color: white;
   word-wrap: break-word;
-  border-radius: 1px;
-}
+  border-radius: 1px; }
 
 .console-header {
   background-color: gray;
   text-align: center;
   padding: .2em;
-  font-weight: bold;
-}
+  font-weight: bold; }
 
 .console-line {
   padding-left: .2em;
   padding-right: .2em;
-  width: 100%;
-}
+  width: 100%; }
 
 .cursor {
   -webkit-animation: 2.5s blink step-end infinite;
   -ms-animation: 2.5s blink step-end infinite;
   -moz-animation: 2.5s blink step-end infinite;
   -o-animation: 2.5s blink step-end infinite;
-  animation: 2.5s blink step-end infinite;
-}
+  animation: 2.5s blink step-end infinite; }
 
 @-webkit-keyframes blink {
   from, to {
-    color: transparent;
-  }
+    color: transparent; }
   50% {
-    color: white;
-  }
-}
+    color: white; } }
 
 /*# sourceMappingURL=stupid-console.css.map */
