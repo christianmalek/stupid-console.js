@@ -107,9 +107,6 @@ var StupidConsole = (function () {
         this.saveToHistory = true;
         this.commandRegistry = new CommandRegistry();
         this.registerEvents();
-        this.scrolledDown = false;
-
-        this.blur();
     }
 
     StupidConsole.prototype.init = function () {
@@ -129,13 +126,6 @@ var StupidConsole = (function () {
             this.headerText + '</div><div class="console-content"></div>');
     };
 
-    //TODO doesn't work
-    StupidConsole.prototype.blur = function () {
-        $(this.id).blur(function () {
-            console.log("blur");
-        })
-    };
-
     StupidConsole.prototype.setDefaultText = function (text) {
         this.defaultText = (text === undefined ? "" : text);
     };
@@ -151,10 +141,9 @@ var StupidConsole = (function () {
 
     StupidConsole.prototype.addNewLine = function (text, saveToHistory) {
         this.offset = undefined;
-        saveToHistory = !!saveToHistory;
+        this.saveToHistory = !!saveToHistory;
         text = (text === undefined ? this.defaultText : text);
         $(this.id + " .console-content").append('<div class="console-line"><span>' + text + "</span></div>");
-        this.scrolledDown = false;
 
         this.scrollToLastLine();
         this.setLastLineActive();
@@ -162,7 +151,6 @@ var StupidConsole = (function () {
 
     StupidConsole.prototype.scrollToLastLine = function () {
         $(this.id + " .console-content").scrollTop(1E10);
-        this.scrolledDown = true;
     };
 
     StupidConsole.prototype.clear = function () {
@@ -334,13 +322,6 @@ var StupidConsole = (function () {
         });
     };
 
-    StupidConsole.prototype.registerScrollEvent = function () {
-        var self = this;
-        $(this.id + " .console-content").scroll(function () {
-            self.scrolledDown = false;
-        })
-    };
-
     StupidConsole.prototype.registerClickEvent = function () {
         var self = this;
 
@@ -352,7 +333,6 @@ var StupidConsole = (function () {
 
     StupidConsole.prototype.registerEvents = function () {
         this.registerClickEvent();
-        this.registerScrollEvent();
         this.registerKeyEvents();
     };
 
