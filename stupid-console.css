@@ -16,6 +16,7 @@
   color: white; }
 
 .console-content {
+  pointer-events: none;
   background-color: black;
   border: 3px solid gray;
   border-top: 0;
@@ -25,27 +26,33 @@
   word-wrap: break-word; }
 
 .console-header {
+  pointer-events: none;
   background-color: gray;
   text-align: center;
   padding: .2em;
   font-weight: bold; }
 
 .console-line {
+  pointer-events: none;
   padding-left: .2em;
   padding-right: .2em;
   width: 100%; }
 
 .cursor {
-  -webkit-animation: 2.5s blink step-end infinite;
-  -ms-animation: 2.5s blink step-end infinite;
-  -moz-animation: 2.5s blink step-end infinite;
-  -o-animation: 2.5s blink step-end infinite;
-  animation: 2.5s blink step-end infinite; }
+  -webkit-animation: none;
+  color: gray; }
+
+.active .cursor {
+  -webkit-animation: 1.3s blink step-end infinite;
+  -ms-animation: 1.3s blink step-end infinite;
+  -moz-animation: 1.3s blink step-end infinite;
+  -o-animation: 1.3s blink step-end infinite;
+  animation: 1.3s blink step-end infinite; }
 
 @-webkit-keyframes blink {
   from, to {
-    color: transparent; }
+    color: white; }
   50% {
-    color: white; } }
+    color: transparent; } }
 
 /*# sourceMappingURL=stupid-console.css.map */

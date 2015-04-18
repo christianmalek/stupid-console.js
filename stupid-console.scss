@@ -28,6 +28,7 @@
 }
 
 .console-content {
+  pointer-events: none;
   background-color: black;
   border: 3px solid gray;
   border-top: 0;
@@ -38,6 +39,7 @@
 }
 
 .console-header {
+  pointer-events: none;
   background-color: gray;
   text-align: center;
   padding: .2em;
@@ -45,6 +47,7 @@
 }
 
 .console-line {
+  pointer-events: none;
   padding-left: .2em;
   padding-right: .2em;
   width: 100%;
@@ -60,15 +63,20 @@
 }
 
 .cursor {
-  @include vendor-prefix(animation, 2.5s blink step-end infinite)
+  -webkit-animation: none;
+  color: gray;
+}
+
+.active .cursor {
+  @include vendor-prefix(animation, 1.3s blink step-end infinite)
 }
 
 @-webkit-keyframes blink {
   from, to {
-    color: transparent;
+    color: white;
   }
   50% {
-    color: white;
+    color: transparent;
   }
 
 }

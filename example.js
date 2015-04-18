@@ -9,7 +9,7 @@ $(document).ready(function () {
     sc.setHeaderText("My pretty stupid console");
     sc.init();
 
-    var sc2 = new StupidConsole("");
+    var sc2 = new StupidConsole("#test2");
     sc2.setDefaultText("C:\\ ");
     sc2.setHeaderText("Console 2");
     sc2.init();

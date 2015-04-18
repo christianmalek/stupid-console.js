@@ -108,8 +108,6 @@ var StupidConsole = (function () {
         this.commandRegistry = new CommandRegistry();
         this.registerEvents();
         this.scrolledDown = false;
-        this.catchGlobalKeyEvents = true;
-        this.hasFocus = false;
 
         this.blur();
     }
@@ -271,10 +269,17 @@ var StupidConsole = (function () {
         }
     };
 
+    StupidConsole.prototype.hasFocus = function () {
+        return $(this.id).hasClass("active");
+    };
+
     StupidConsole.prototype.registerKeyEvents = function () {
         var self = this;
 
         $(document).keypress(function (e) {
+            if (self.hasFocus() === false)
+                return;
+
             switch (e.which) {
 
                 //enter
@@ -292,6 +297,9 @@ var StupidConsole = (function () {
         });
 
         $(document).keydown(function (e) {
+            if (self.hasFocus() === false)
+                return;
+
             switch (e.which) {
 
                 //backspace
@@ -334,8 +342,11 @@ var StupidConsole = (function () {
     };
 
     StupidConsole.prototype.registerClickEvent = function () {
-        $(this.id + " .console").click(function () {
-            $(this.id + " .console").addClass("active");
+        var self = this;
+
+        $(self.id).click(function () {
+            $(".console.active").removeClass("active");
+            $(self.id + ".console").addClass("active");
         });
     };
 
