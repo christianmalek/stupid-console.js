@@ -1,7 +1,7 @@
 ![](stupidconsole.png)
 
 # stupid-console.js
-A very simplistic console-like component for websites e.g. to create creative about-pages.
+A very simplistic console-like component for websites e.g. to create creative about-pages. Take a look at the [demo](http://phisherman.github.io/stupid-console.js/)!
 
 ## Features
 - History with *Arrow-Up* and *Arrow-Down*
@@ -55,7 +55,7 @@ $(document).ready(function () {
     
     //called function when no matching command got found
     sc.setErrorCallback(function (args) {
-        sc.addNewLine("invalid command!");
+        sc.addNewLine("Invalid command. Type in "help" to see all commands.");
     });
     
     //registers click and key handlers, mandatory to use stupid-console.js!
@@ -73,19 +73,8 @@ $(document).ready(function () {
                 sc.addNewLine(cmd + ": " + description, false);
             }
         }
-    }, "Hilft dir!");
-
-    sc.register("args", function (args) {
-        sc.addNewLine("Übergebene Argumente: ");
-        console.log(args);
-        for (var i = 0; i < args.length; i++) {
-            sc.appendCurrentLine((i + 1) + ". " + args[i] + " ");
-        }
-    }, "");
-    sc.register("cls", function () {
-        sc.clear();
-    });
-
+    }, "Shows all registered commands");
+    
     sc.register("history", function (args) {
         switch (args[0]) {
             case "-show":
@@ -98,7 +87,7 @@ $(document).ready(function () {
                 sc.history.clear();
                 break;
         }
-    }, "-show: zeigt History, -clear: löscht History");
+    }, "-show: shows history, -clear: deletes history");
 });
 
 ```
