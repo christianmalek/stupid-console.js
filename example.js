@@ -1,18 +1,13 @@
 $(document).ready(function () {
     'use strict';
 
-    var sc = new StupidConsole("#test");
+    var sc = new StupidConsole("#exampleConsole");
     sc.setDefaultText("foo@bar: $ ");
     sc.setErrorCallback(function (args) {
-        sc.addNewLine("Ungültiger Befehl");
+        sc.addNewLine('Invalid command. Type in "help" to see all commands.');
     });
     sc.setHeaderText("My pretty stupid console");
     sc.init();
-
-    var sc2 = new StupidConsole("#test2");
-    sc2.setDefaultText("C:\\ ");
-    sc2.setHeaderText("Console 2");
-    sc2.init();
 
     sc.register("help", function () {
         var commands = sc.commandRegistry.commands;
@@ -20,22 +15,11 @@ $(document).ready(function () {
         for (var cmd in commands) {
             if (commands.hasOwnProperty(cmd)) {
                 var description = commands[cmd].description;
-                description = (description === "" ? "n/a" : description);
+                description = (description === "" ? "no description defined" : description);
                 sc.addNewLine(cmd + ": " + description, false);
             }
         }
-    }, "Hilft dir!");
-
-    sc.register("args", function (args) {
-        sc.addNewLine("Übergebene Argumente: ");
-        console.log(args);
-        for (var i = 0; i < args.length; i++) {
-            sc.appendCurrentLine((i + 1) + ". " + args[i] + " ");
-        }
-    }, "");
-    sc.register("cls", function () {
-        sc.clear();
-    });
+    }, "Shows all registered commands");
 
     sc.register("history", function (args) {
         switch (args[0]) {
@@ -49,5 +33,5 @@ $(document).ready(function () {
                 sc.history.clear();
                 break;
         }
-    }, "-show: zeigt History, -clear: löscht History");
+    }, "-show: shows history, -clear: deletes history");
 });
