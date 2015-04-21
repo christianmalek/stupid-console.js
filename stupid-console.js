@@ -2,7 +2,7 @@ var StupidConsole = (function () {
     'use strict';
 
     /**
-     * @description The CommandRegistry provides methods to register, deregister and trigger commands
+     * @description the CommandRegistry provides methods to register, deregister and trigger commands
      * @constructor
      */
     function CommandRegistry() {
@@ -68,6 +68,10 @@ var StupidConsole = (function () {
         this.offset = undefined;
     }
 
+    /**
+     * @description Navigates in the history one item up
+     * @returns {boolean|*} returns the navigated item or false if there is no history
+     */
     History.prototype.navigateUp = function () {
         var history = this.history;
 
@@ -85,6 +89,10 @@ var StupidConsole = (function () {
             return false;
     };
 
+    /**
+     * @description Navigates in the history one item down
+     * @returns {boolean|*} returns the navigated item or false if there is no history
+     */
     History.prototype.navigateDown = function () {
         var history = this.history;
 
@@ -102,16 +110,28 @@ var StupidConsole = (function () {
             return false;
     };
 
+    /**
+     * @description Clears the history
+     */
     History.prototype.clear = function () {
         this.history = [];
         this.offset = undefined;
     };
 
+    /**
+     * @description Adds an item to the history
+     * @param obj The passed object, can be everything
+     */
     History.prototype.add = function (obj) {
         this.history.push(obj);
         this.offset = undefined;
     };
 
+
+    /**
+     * @description Returns the current navigated history item
+     * @returns {boolean|*} returns the navigated item or false if there is no history
+     */
     History.prototype.get = function () {
         if (this.offset === undefined ||
             this.history === undefined ||
@@ -120,6 +140,11 @@ var StupidConsole = (function () {
         return this.history[this.offset];
     };
 
+    /**
+     * creates a new console
+     * @param id The id of the div the console should be embedded in
+     * @constructor
+     */
     function StupidConsole(id) {
         if (!id)
             throw "ID value \"" + id + "\" is invalid or undefined.";
@@ -132,16 +157,27 @@ var StupidConsole = (function () {
         this.registerEvents();
     }
 
+    /**
+     * @description Embeds the console into the DOM
+     */
     StupidConsole.prototype.init = function () {
         this.createConsole();
         this.addNewLine();
     };
 
+    /**
+     * @description Changes the header text of the console
+     * @param text
+     */
     StupidConsole.prototype.setHeaderText = function (text) {
         this.headerText = (text === undefined ? "" : text);
         $(this.id + " .console-header").text(this.headerText);
     };
 
+
+    /**
+     * @description Creates the necessary HTML Elements for the console
+     */
     StupidConsole.prototype.createConsole = function () {
         var console = $(this.id);
         console.addClass("console");
@@ -149,19 +185,36 @@ var StupidConsole = (function () {
             this.headerText + '</div><div class="console-content"></div>');
     };
 
+    /**
+     * @description Sets the beginning text of new lines
+     * @param text
+     */
     StupidConsole.prototype.setDefaultText = function (text) {
         this.defaultText = (text === undefined ? "" : text);
     };
 
+    /**
+     * @description Sets the function which gets called if the passed command name isn't registered.
+     * @param callbackFn The function to be called when the error occurs
+     */
     StupidConsole.prototype.setErrorCallback = function (callbackFn) {
         this.commandRegistry.register("error", callbackFn);
     };
 
+    /**
+     * @description Appends the current line
+     * @param text
+     */
     StupidConsole.prototype.appendCurrentLine = function (text) {
         text = (text === undefined ? this.defaultText : text);
         $(this.id + " .console-edit-left").append(text);
     };
 
+    /**
+     * @description Adds a new line
+     * @param text optional beginning text - if its undefined, the default text will be used
+     * @param saveToHistory - optional flag - if set, the line won't be saved in the history
+     */
     StupidConsole.prototype.addNewLine = function (text, saveToHistory) {
         this.offset = undefined;
         this.saveToHistory = (saveToHistory === undefined ? true : saveToHistory);
@@ -172,19 +225,31 @@ var StupidConsole = (function () {
         this.setLastLineActive();
     };
 
+    /**
+     * @description Scrolls the console to the last line
+     */
     StupidConsole.prototype.scrollToLastLine = function () {
         $(this.id + " .console-content").scrollTop(1E10);
     };
 
+    /**
+     * @description Clears the console's content
+     */
     StupidConsole.prototype.clear = function () {
         $(this.id + " .console-content").empty();
     };
 
+    /**
+     * @description Clears the current line
+     */
     StupidConsole.prototype.clearLine = function () {
         $(this.id + " .console-edit-left").text("");
         $(this.id + " .console-edit-right").text("");
     };
 
+    /**
+     * @description Moves the cursor right
+     */
     StupidConsole.prototype.moveCursorRight = function () {
         var ceRight = $(this.id + " .console-edit-right");
         var right = ceRight.text();
@@ -197,6 +262,9 @@ var StupidConsole = (function () {
         ceRight.text(right.substring(1, right.length));
     };
 
+    /**
+     * @description Moves the cursor left
+     */
     StupidConsole.prototype.moveCursorLeft = function () {
         var ceLeft = $(this.id + " .console-edit-left");
         var left = ceLeft.text();
@@ -209,6 +277,9 @@ var StupidConsole = (function () {
         ceLeft.text(left.substring(0, left.length - 1));
     };
 
+    /**
+     * @description Navigates the history up and overwrites the current line with the history item
+     */
     StupidConsole.prototype.navigateHistoryUp = function () {
         var text = this.history.navigateUp();
 
@@ -218,6 +289,9 @@ var StupidConsole = (function () {
         }
     };
 
+    /**
+     * @description Navigates the history down and overwrites the current line with the history item
+     */
     StupidConsole.prototype.navigateHistoryDown = function () {
         var text = this.history.navigateDown();
 
@@ -227,6 +301,9 @@ var StupidConsole = (function () {
         }
     };
 
+    /**
+     * @description Sets the last line active
+     */
     StupidConsole.prototype.setLastLineActive = function () {
         $(this.id + " .cursor").remove();
         $(this.id + " .console-active").removeClass("console-active");
@@ -238,52 +315,99 @@ var StupidConsole = (function () {
         last.append('<span class="console-edit-right"></span>');
     };
 
+    /**
+     * @description Writes to active line left from cursor
+     * @param text
+     */
     StupidConsole.prototype.writeToActiveLine = function (text) {
         $(this.id + " .console-edit-left").append(text);
     };
 
+    /**
+     * @description Returns a cursor with the passed text as "cursor text"
+     * @param text
+     * @returns {string} HTML element with the cursor text
+     */
     StupidConsole.prototype.getCursorSpan = function (text) {
         text = text === undefined ? "" : text;
         return '<span class="cursor">' + text + "</span>";
     };
 
-    StupidConsole.prototype.removeOneCharFromActiveLine = function () {
+    /**
+     * @description Removes one char left from the cursor's position
+     */
+    StupidConsole.prototype.removeOneCharFromCursorLeft = function () {
         var ceLeft = $(this.id + " .console-edit-left");
         var text = ceLeft.text();
         text = text.length > 0 ? text.substr(0, text.length - 1) : text;
         ceLeft.text(text);
     };
 
-//TODO improve parsing
+    //TODO improve separating arguments
+    /**
+     * @description Parses the input of the current line and returns the separated arguments;
+     * @returns {Array} The separated arguments
+     */
     StupidConsole.prototype.parseInput = function () {
         var text = this.getInput();
-        if (this.saveToHistory)
-            this.history.add(text);
         return text.split(" ");
     };
 
+    /**
+     * @description Gets the input of the current line
+     * @returns {String} the current line's input
+     */
     StupidConsole.prototype.getInput = function () {
         return $(this.id + " .console-edit-left").text() + $(this.id + " .console-edit-right").text();
     };
 
+    /**
+     * @description registers a new command in the console
+     * @param name The name of the command
+     * @param callbackFn The function to be called when the command will be triggered
+     * @param description An optional short description for the command; if you called "registerBasicCommands()" the "help" command will show the commands with the description
+     */
     StupidConsole.prototype.register = function (name, callbackFn, description) {
         this.commandRegistry.register(name, callbackFn, description);
     };
 
+    /**
+     * @description deregisters a command
+     * @param name the name of the command which should be deregistered
+     */
     StupidConsole.prototype.deregister = function (name) {
         this.commandRegistry.deregister(name);
     };
 
+    /**
+     * @description triggers the callback function of the command with the parameter's name. If there is none, the "error" command will be triggered if it is registered.
+     * @param name The name of the command which should be triggered
+     */
     StupidConsole.prototype.trigger = function (name) {
         if (!this.commandRegistry.trigger(name)) {
             this.commandRegistry.trigger("error");
         }
     };
 
+    /**
+     * @description Returns if this console is currently the active one.
+     * @returns {boolean}
+     */
     StupidConsole.prototype.hasFocus = function () {
         return $(this.id).hasClass("active");
     };
 
+    /**
+     * @description Sets this console to the active one.
+     */
+    StupidConsole.prototype.setActive = function () {
+        $(".console.active").removeClass("active");
+        $(this.id + ".console").addClass("active");
+    };
+
+    /**
+     * @description Registers all necessary key handlers
+     */
     StupidConsole.prototype.registerKeyEvents = function () {
         var self = this;
 
@@ -297,6 +421,8 @@ var StupidConsole = (function () {
                 case 13:
                     if (self.getInput() !== "") {
                         self.trigger(self.parseInput());
+                        if (this.saveToHistory)
+                            this.history.add(text);
                     }
                     self.addNewLine();
                     break;
@@ -315,7 +441,7 @@ var StupidConsole = (function () {
 
                 //backspace
                 case 8:
-                    self.removeOneCharFromActiveLine();
+                    self.removeOneCharFromCursorLeft();
                     e.preventDefault();
                     break;
 
@@ -345,11 +471,9 @@ var StupidConsole = (function () {
         });
     };
 
-    StupidConsole.prototype.setActive = function () {
-        $(".console.active").removeClass("active");
-        $(this.id + ".console").addClass("active");
-    };
-
+    /**
+     * @description Registers all necessary click handlers
+     */
     StupidConsole.prototype.registerClickEvent = function () {
         var self = this;
 
@@ -358,9 +482,50 @@ var StupidConsole = (function () {
         });
     };
 
+    /**
+     * @description Registers all necessary key and click handlers
+     */
     StupidConsole.prototype.registerEvents = function () {
         this.registerClickEvent();
         this.registerKeyEvents();
+    };
+
+    /**
+     * @description Registers a few commands to extend the functionality of the console
+     */
+    StupidConsole.prototype.registerBasicCommands = function () {
+        var self = this;
+
+        self.register("help", function () {
+            var commands = self.commandRegistry.commands;
+
+            for (var cmd in commands) {
+                if (commands.hasOwnProperty(cmd)) {
+                    var description = commands[cmd].description;
+                    description = (description === "" ? "no description defined" : description);
+                    self.addNewLine(cmd + ": " + description, false);
+                }
+            }
+        }, "Shows all registered commands");
+
+        self.register("history", function (args) {
+            switch (args[0]) {
+                case "-show":
+                    var history = self.history.history;
+
+                    for (var i = 0; i < history.length; i++) {
+                        self.addNewLine(history[i], false);
+                    }
+                    break;
+                case "-clear":
+                    self.history.clear();
+                    break;
+            }
+        }, "-show: shows history, -clear: deletes history");
+
+        self.register("clear", function () {
+            self.clear();
+        }, "clears the console");
     };
 
     return StupidConsole;
