@@ -93,4 +93,4 @@ $(document).ready(function () {
 ```
 
 ##License
-This projects uses the MIT license.
+This project uses the MIT license.
