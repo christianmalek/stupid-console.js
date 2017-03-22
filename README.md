@@ -1,7 +1,7 @@
 ![](stupidconsole.png)
 
 # stupid-console.js
-A very simplistic console-like component for websites e.g. to create creative about-pages. Take a look at the [demo](http://phisherman.github.io/stupid-console.js/)!
+A very simplistic console-like component for websites e.g. to create creative about-pages.
 
 ## Features
 - History with *Arrow-Up* and *Arrow-Down*
@@ -91,6 +91,3 @@ $(document).ready(function () {
 });
 
 ```
-
-##License
-This project uses the MIT license.
